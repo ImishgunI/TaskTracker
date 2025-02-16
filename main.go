@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"log"
 	"os"
+	"slices"
+	"strconv"
 	"time"
 )
 
@@ -21,12 +23,21 @@ func main() {
 		log.Fatal("You should use command(add update delete list)")
 	}
 	filename := "tasks.json"
-	var description string
+	var (
+		description string
+		tasks       []Task
+	)
 	command := os.Args[1]
 	result := checkCommand(command)
 	if result == enums.Add {
 		description = getDescription()
-		addTask(filename, description)
+		addTask(tasks, filename, description)
+	} else if result == enums.Delete {
+		id, err := getId()
+		if err != nil {
+			log.Fatal("Need to write a number")
+		}
+		deleteTask(filename, id, tasks)
 	}
 }
 
@@ -35,6 +46,13 @@ func getDescription() string {
 		log.Fatal("You must write a task description")
 	}
 	return os.Args[2]
+}
+
+func getId() (int, error) {
+	if len(os.Args) < 3 {
+		log.Fatal("You must write a task id")
+	}
+	return strconv.Atoi(os.Args[2])
 }
 
 func checkCommand(command string) int {
@@ -76,9 +94,8 @@ func checkCommandList() int {
 	return result
 }
 
-func addTask(filename, desc string) {
+func addTask(tasks []Task, filename, desc string) {
 	file, err := os.OpenFile(filename, os.O_CREATE|os.O_RDONLY, 0644)
-	var tasks []Task
 	if err != nil && err.Error() != "EOF" {
 		log.Fatal(err)
 	}
@@ -104,13 +121,57 @@ func addTask(filename, desc string) {
 	}
 
 	tasks = append(tasks, task)
-
 	file, err = os.OpenFile(filename, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer file.Close()
 
+	encoder := json.NewEncoder(file)
+	encoder.SetIndent("", "  ")
+	err = encoder.Encode(tasks)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func changeId(tasks []Task) []Task {
+	for i := 0; i < len(tasks); i++ {
+		tasks[i].Id -= 1
+	}
+	return tasks
+}
+
+func deleteTask(filename string, id int, tasks []Task) {
+	file, err := os.OpenFile(filename, os.O_RDONLY, 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+	sizeFile, err := os.Stat(filename)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if sizeFile.Size() > 0 {
+		decoder := json.NewDecoder(file)
+		err = decoder.Decode(&tasks)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+	var i int
+	for i = 0; i < len(tasks); i++ {
+		if tasks[i].Id == id {
+			break
+		}
+	}
+	tasks = slices.Delete(tasks, i, i+1)
+	tasks = changeId(tasks)
+	file, err = os.OpenFile(filename, os.O_WRONLY|os.O_TRUNC, 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
 	encoder := json.NewEncoder(file)
 	encoder.SetIndent("", "  ")
 	err = encoder.Encode(tasks)
