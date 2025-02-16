@@ -1,39 +1,16 @@
 package main
 
 import (
+	"TaskTracker/enums"
 	"fmt"
 	"log"
 	"os"
 )
 
-const (
-	add              = 1
-	delete           = 2
-	update           = 3
-	mark_in_progress = 4
-	mark_done        = 5
-	listAll          = 6
-	listTodo         = 7
-	listInProgress   = 8
-	listDone         = 9
-)
-
-const (
-	commandAdd  = "add"
-	commandDel  = "delete"
-	commandUpd  = "update"
-	commandMIP  = "mark-in-progress"
-	commandMD   = "mark-done"
-	commandList = "list"
-)
-
-const (
-	done       = "done"
-	todo       = "todo"
-	inprogress = "in-progress"
-)
-
 func main() {
+	if len(os.Args) < 2 {
+		log.Fatal("You should use command(add update delete list)\n")
+	}
 	command := os.Args[1]
 	result := checkCommand(command)
 	fmt.Print(result)
@@ -42,17 +19,17 @@ func main() {
 func checkCommand(command string) int {
 	var result int
 	switch command {
-	case commandAdd:
-		result = add
-	case commandDel:
-		result = delete
-	case commandUpd:
-		result = update
-	case commandMIP:
-		result = mark_in_progress
-	case commandMD:
-		result = mark_done
-	case commandList:
+	case enums.CommandAdd:
+		result = enums.Add
+	case enums.CommandDel:
+		result = enums.Delete
+	case enums.CommandUpd:
+		result = enums.Update
+	case enums.CommandMIP:
+		result = enums.Mark_in_progress
+	case enums.CommandMD:
+		result = enums.Mark_done
+	case enums.CommandList:
 		result = checkCommandList()
 	default:
 		log.Fatal("Unknown command")
@@ -63,17 +40,17 @@ func checkCommandList() int {
 	var result int
 	if len(os.Args) > 2 {
 		switch os.Args[2] {
-		case done:
-			result = listDone
-		case todo:
-			result = listTodo
-		case inprogress:
-			result = listInProgress
+		case enums.Done:
+			result = enums.ListDone
+		case enums.Todo:
+			result = enums.ListTodo
+		case enums.Inprogress:
+			result = enums.ListInProgress
 		default:
 			log.Fatal("Unknown list command")
 		}
 	} else {
-		result = listAll
+		result = enums.ListAll
 	}
 	return result
 }
