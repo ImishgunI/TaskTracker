@@ -24,7 +24,7 @@ func main() {
 	var description string
 	command := os.Args[1]
 	result := checkCommand(command)
-	if result == 1 {
+	if result == enums.Add {
 		description = getDescription()
 		addTask(filename, description)
 	}
@@ -76,7 +76,7 @@ func checkCommandList() int {
 	return result
 }
 
-func addTask(filename, desc string) error {
+func addTask(filename, desc string) {
 	file, err := os.OpenFile(filename, os.O_CREATE|os.O_RDONLY, 0644)
 	var tasks []Task
 	if err != nil && err.Error() != "EOF" {
@@ -117,5 +117,4 @@ func addTask(filename, desc string) error {
 	if err != nil {
 		log.Fatal(err)
 	}
-	return nil
 }
