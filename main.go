@@ -4,6 +4,7 @@ import (
 	"TaskTracker/enums"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"os"
 	"slices"
@@ -58,6 +59,14 @@ func main() {
 			log.Fatal(err)
 		}
 		markDone(id, tasks, filename)
+	} else if result == enums.ListAll {
+		listAll(filename)
+	} else if result == enums.ListTodo {
+
+	} else if result == enums.ListInProgress {
+
+	} else if result == enums.ListDone {
+
 	}
 }
 
@@ -241,4 +250,24 @@ func markDone(id int, tasks []Task, filename string) {
 		}
 	}
 	encode(tasks, filename)
+}
+
+func listAll(filename string) {
+	file, err := os.Open(filename)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+	info, err := os.Stat(filename)
+	if err != nil {
+		log.Fatal(err)
+	}
+	data := make([]byte, info.Size())
+	count, err := file.Read(data)
+	if err != nil {
+		log.Fatal(err)
+	}
+	for i := 0; i < count; i++ {
+		fmt.Print(string(data[i]))
+	}
 }
