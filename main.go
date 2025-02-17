@@ -46,6 +46,18 @@ func main() {
 		}
 		description = getDescriptionForUpdate()
 		updateTask(id, tasks, filename, description)
+	} else if result == enums.Mark_in_progress {
+		id, err := getId()
+		if err != nil {
+			log.Fatal(err)
+		}
+		markIP(id, tasks, filename)
+	} else if result == enums.Mark_done {
+		id, err := getId()
+		if err != nil {
+			log.Fatal(err)
+		}
+		markDone(id, tasks, filename)
 	}
 }
 
@@ -202,8 +214,31 @@ func updateTask(id int, tasks []Task, filename, description string) {
 	for i := 0; i < len(tasks); i++ {
 		if tasks[i].Id == id {
 			tasks[i].Description = description
+			break
 		}
 	}
 
+	encode(tasks, filename)
+}
+
+func markIP(id int, tasks []Task, filename string) {
+	decode(&tasks, filename)
+	for i := 0; i < len(tasks); i++ {
+		if tasks[i].Id == id {
+			tasks[i].Status = enums.Inprogress
+			break
+		}
+	}
+	encode(tasks, filename)
+}
+
+func markDone(id int, tasks []Task, filename string) {
+	decode(&tasks, filename)
+	for i := 0; i < len(tasks); i++ {
+		if tasks[i].Id == id {
+			tasks[i].Status = enums.Done
+			break
+		}
+	}
 	encode(tasks, filename)
 }
