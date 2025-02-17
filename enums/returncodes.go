@@ -22,7 +22,7 @@ const (
 )
 
 const (
-	Done       = "Done"
-	Todo       = "Todo"
-	Inprogress = "In-progress"
+	Done       = "done"
+	Todo       = "todo"
+	Inprogress = "in-progress"
 )
