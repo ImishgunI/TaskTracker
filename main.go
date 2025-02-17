@@ -297,7 +297,7 @@ func listInProgress(filename string, tasks []Task) {
 	for i := 0; i < len(tasks); i++ {
 		if tasks[i].Status == enums.Inprogress {
 			fmt.Printf("\n%2c\n", '{')
-			fmt.Printf("    \"id\": %d,\n    \"description\": %s,\n    \"status\": %s,\n    \"createdAt\": %s,\n    \"updatedAt\": %s\n", tasks[i].Id,
+			fmt.Printf("    \"id\": %d,\n    \"description\": \"%s\",\n    \"status\": \"%s\",\n    \"createdAt\": \"%s\",\n    \"updatedAt\": \"%s\"\n", tasks[i].Id,
 				tasks[i].Description, tasks[i].Status,
 				tasks[i].CreatedAt, tasks[i].UpdatedAt)
 			fmt.Printf("%2c\n", '}')
@@ -312,7 +312,7 @@ func listDone(filename string, tasks []Task) {
 	for i := 0; i < len(tasks); i++ {
 		if tasks[i].Status == enums.Done {
 			fmt.Printf("\n%2c\n", '{')
-			fmt.Printf("    \"id\": %d,\n    \"description\": %s,\n    \"status\": %s,\n    \"createdAt\": %s,\n    \"updatedAt\": %s\n", tasks[i].Id,
+			fmt.Printf("    \"id\": %d,\n    \"description\": \"%s\",\n    \"status\": \"%s\",\n    \"createdAt\": \"%s\",\n    \"updatedAt\": \"%s\"\n", tasks[i].Id,
 				tasks[i].Description, tasks[i].Status,
 				tasks[i].CreatedAt, tasks[i].UpdatedAt)
 			fmt.Printf("%2c\n", '}')
