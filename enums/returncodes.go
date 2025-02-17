@@ -1,15 +1,15 @@
 package enums
 
 const (
-	Add              = 1
-	Delete           = 2
-	Update           = 3
-	Mark_in_progress = 4
-	Mark_done        = 5
-	ListAll          = 6
-	ListTodo         = 7
-	ListInProgress   = 8
-	ListDone         = 9
+	Add = iota + 1
+	Delete
+	Update
+	Mark_in_progress
+	Mark_done
+	ListAll
+	ListTodo
+	ListInProgress
+	ListDone
 )
 
 const (
