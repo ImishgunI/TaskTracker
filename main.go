@@ -13,11 +13,11 @@ import (
 )
 
 type Task struct {
-	Id          int       `json:"id"`
-	Description string    `json:"description"`
-	Status      string    `json:"status"`
-	CreatedAt   time.Time `json:"createdAt"`
-	UpdatedAt   time.Time `json:"updatedAt"`
+	Id          int    `json:"id"`
+	Description string `json:"description"`
+	Status      string `json:"status"`
+	CreatedAt   string `json:"createdAt"`
+	UpdatedAt   string `json:"updatedAt"`
 }
 
 func main() {
@@ -25,14 +25,15 @@ func main() {
 		log.Fatal("You should use command(add update delete list)")
 	}
 	filename := "tasks.json"
-	var (
-		description string
-		tasks       []Task
-	)
+	var tasks []Task
 	command := os.Args[1]
 	result := checkCommand(command)
+	callFuncs(result, tasks, filename)
+}
+
+func callFuncs(result int, tasks []Task, filename string) {
 	if result == enums.Add {
-		description = getDescriptionForAdd()
+		description := getDescriptionForAdd()
 		addTask(tasks, filename, description)
 	} else if result == enums.Delete {
 		id, err := getId()
@@ -45,7 +46,7 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		description = getDescriptionForUpdate()
+		description := getDescriptionForUpdate()
 		updateTask(id, tasks, filename, description)
 	} else if result == enums.Mark_in_progress {
 		id, err := getId()
@@ -62,11 +63,11 @@ func main() {
 	} else if result == enums.ListAll {
 		listAll(filename)
 	} else if result == enums.ListTodo {
-
+		listTodo(filename, tasks)
 	} else if result == enums.ListInProgress {
-
+		listInProgress(filename, tasks)
 	} else if result == enums.ListDone {
-
+		listDone(filename, tasks)
 	}
 }
 
@@ -184,12 +185,13 @@ func encode(tasks []Task, filename string) {
 
 func addTask(tasks []Task, filename, desc string) {
 	decode(&tasks, filename)
+	t := time.Now()
 	var task = Task{
 		Id:          len(tasks) + 1,
 		Description: desc,
 		Status:      "todo",
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
+		CreatedAt:   t.Format(time.RFC1123),
+		UpdatedAt:   t.Format(time.RFC1123),
 	}
 
 	tasks = append(tasks, task)
@@ -220,9 +222,11 @@ func deleteTask(filename string, id int, tasks []Task) {
 
 func updateTask(id int, tasks []Task, filename, description string) {
 	decode(&tasks, filename)
+	t := time.Now()
 	for i := 0; i < len(tasks); i++ {
 		if tasks[i].Id == id {
 			tasks[i].Description = description
+			tasks[i].UpdatedAt = t.Format(time.RFC1123)
 			break
 		}
 	}
@@ -270,4 +274,49 @@ func listAll(filename string) {
 	for i := 0; i < count; i++ {
 		fmt.Print(string(data[i]))
 	}
+}
+
+func listTodo(filename string, tasks []Task) {
+	decode(&tasks, filename)
+	fmt.Print("[")
+	for i := 0; i < len(tasks); i++ {
+		if tasks[i].Status == enums.Todo {
+			fmt.Printf("\n%2c\n", '{')
+			fmt.Printf("    \"id\": %d,\n    \"description\": \"%s\",\n    \"status\": \"%s\",\n    \"createdAt\": \"%s\",\n    \"updatedAt\": \"%s\"\n", tasks[i].Id,
+				tasks[i].Description, tasks[i].Status,
+				tasks[i].CreatedAt, tasks[i].UpdatedAt)
+			fmt.Printf("%2c\n", '}')
+		}
+	}
+	fmt.Println("]")
+}
+
+func listInProgress(filename string, tasks []Task) {
+	decode(&tasks, filename)
+	fmt.Print("[")
+	for i := 0; i < len(tasks); i++ {
+		if tasks[i].Status == enums.Inprogress {
+			fmt.Printf("\n%2c\n", '{')
+			fmt.Printf("    \"id\": %d,\n    \"description\": %s,\n    \"status\": %s,\n    \"createdAt\": %s,\n    \"updatedAt\": %s\n", tasks[i].Id,
+				tasks[i].Description, tasks[i].Status,
+				tasks[i].CreatedAt, tasks[i].UpdatedAt)
+			fmt.Printf("%2c\n", '}')
+		}
+	}
+	fmt.Println("]")
+}
+
+func listDone(filename string, tasks []Task) {
+	decode(&tasks, filename)
+	fmt.Print("[")
+	for i := 0; i < len(tasks); i++ {
+		if tasks[i].Status == enums.Done {
+			fmt.Printf("\n%2c\n", '{')
+			fmt.Printf("    \"id\": %d,\n    \"description\": %s,\n    \"status\": %s,\n    \"createdAt\": %s,\n    \"updatedAt\": %s\n", tasks[i].Id,
+				tasks[i].Description, tasks[i].Status,
+				tasks[i].CreatedAt, tasks[i].UpdatedAt)
+			fmt.Printf("%2c\n", '}')
+		}
+	}
+	fmt.Println("]")
 }
