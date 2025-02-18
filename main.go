@@ -3,7 +3,6 @@ package main
 import (
 	"TaskTracker/enums"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -136,25 +135,8 @@ func checkCommandList() int {
 	return result
 }
 
-func fileExist(filename string) bool {
-	_, err := os.Stat(filename)
-	if err == nil {
-		return true
-	}
-	if errors.Is(err, os.ErrNotExist) {
-		return false
-	}
-	return false
-}
-
 func decode(tasks *[]Task, filename string) {
-	var flag int
-	if fileExist(filename) {
-		flag = os.O_CREATE | os.O_RDONLY
-	} else {
-		flag = os.O_RDONLY
-	}
-	file, err := os.OpenFile(filename, flag, 0644)
+	file, err := os.OpenFile(filename, os.O_CREATE|os.O_RDONLY, 0644)
 	if err != nil && err.Error() != "EOF" {
 		log.Fatal(err)
 	}
