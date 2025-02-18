@@ -25,40 +25,31 @@ func main() {
 		log.Fatal("You should use command(add update delete list)")
 	}
 	filename := "tasks.json"
-	var tasks []Task
+	var (
+		tasks []Task
+		id    int
+	)
 	command := os.Args[1]
 	result := checkCommand(command)
-	callFuncs(result, tasks, filename)
+	id, err := choseId(result)
+	if err != nil {
+		log.Fatal(err)
+	}
+	callFuncs(result, tasks, filename, id)
 }
 
-func callFuncs(result int, tasks []Task, filename string) {
+func callFuncs(result int, tasks []Task, filename string, id int) {
 	if result == enums.Add {
 		description := getDescriptionForAdd()
 		addTask(tasks, filename, description)
 	} else if result == enums.Delete {
-		id, err := getId()
-		if err != nil {
-			log.Fatal("Need to write a number")
-		}
 		deleteTask(filename, id, tasks)
 	} else if result == enums.Update {
-		id, err := getId()
-		if err != nil {
-			log.Fatal(err)
-		}
 		description := getDescriptionForUpdate()
 		updateTask(id, tasks, filename, description)
 	} else if result == enums.Mark_in_progress {
-		id, err := getId()
-		if err != nil {
-			log.Fatal(err)
-		}
 		markIP(id, tasks, filename)
 	} else if result == enums.Mark_done {
-		id, err := getId()
-		if err != nil {
-			log.Fatal(err)
-		}
 		markDone(id, tasks, filename)
 	} else if result == enums.ListAll {
 		listAll(filename)
@@ -90,6 +81,18 @@ func getId() (int, error) {
 		log.Fatal("You must write a task id")
 	}
 	return strconv.Atoi(os.Args[2])
+}
+
+func choseId(result int) (int, error) {
+	if result == enums.Delete {
+		return getId()
+	} else if result == enums.Update {
+		return getId()
+	} else if result == enums.Mark_in_progress || result == enums.Mark_done {
+		return getId()
+	} else {
+		return 0, nil
+	}
 }
 
 func checkCommand(command string) int {
