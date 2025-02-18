@@ -62,6 +62,8 @@ func callFuncs(result int, tasks []Task, filename string, id int) {
 	}
 }
 
+/*** Pool of accessory functions ***/
+
 func getDescriptionForAdd() string {
 	if len(os.Args) < 3 {
 		log.Fatal("You must write a task description")
@@ -186,6 +188,17 @@ func encode(tasks []Task, filename string) {
 	}
 }
 
+func changeId(tasks []Task) []Task {
+	for i := 0; i < len(tasks); i++ {
+		if tasks[i].Id != 1 {
+			tasks[i].Id -= 1
+		}
+	}
+	return tasks
+}
+
+/***  Pool of main functions  ***/
+
 func addTask(tasks []Task, filename, desc string) {
 	decode(&tasks, filename)
 	t := time.Now()
@@ -199,15 +212,6 @@ func addTask(tasks []Task, filename, desc string) {
 
 	tasks = append(tasks, task)
 	encode(tasks, filename)
-}
-
-func changeId(tasks []Task) []Task {
-	for i := 0; i < len(tasks); i++ {
-		if tasks[i].Id != 1 {
-			tasks[i].Id -= 1
-		}
-	}
-	return tasks
 }
 
 func deleteTask(filename string, id int, tasks []Task) {
