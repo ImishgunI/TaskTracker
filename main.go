@@ -199,6 +199,9 @@ func addTask(tasks []Task, filename, desc string) {
 func deleteTask(filename string, id int, tasks []Task) {
 	decode(&tasks, filename)
 	var i int
+	if id > len(tasks) {
+		log.Fatal("Task isn't exist")
+	}
 	for i = 0; i < len(tasks); i++ {
 		if tasks[i].Id == id {
 			break
@@ -212,6 +215,9 @@ func deleteTask(filename string, id int, tasks []Task) {
 func updateTask(id int, tasks []Task, filename, description string) {
 	decode(&tasks, filename)
 	t := time.Now()
+	if id > len(tasks) {
+		log.Fatal("Task isn't exist")
+	}
 	for i := 0; i < len(tasks); i++ {
 		if tasks[i].Id == id {
 			tasks[i].Description = description
@@ -225,6 +231,9 @@ func updateTask(id int, tasks []Task, filename, description string) {
 
 func markIP(id int, tasks []Task, filename string) {
 	decode(&tasks, filename)
+	if id > len(tasks) {
+		log.Fatal("Task isn't exist")
+	}
 	for i := 0; i < len(tasks); i++ {
 		if tasks[i].Id == id {
 			tasks[i].Status = enums.Inprogress
@@ -236,6 +245,9 @@ func markIP(id int, tasks []Task, filename string) {
 
 func markDone(id int, tasks []Task, filename string) {
 	decode(&tasks, filename)
+	if id > len(tasks) {
+		log.Fatal("Task isn't exist")
+	}
 	for i := 0; i < len(tasks); i++ {
 		if tasks[i].Id == id {
 			tasks[i].Status = enums.Done
