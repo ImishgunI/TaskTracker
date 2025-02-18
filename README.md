@@ -2,9 +2,9 @@
 
 This is a simple program for keeping a task list. With it you can add, delete, update, change task status and output both simple and by status.
 
-To start using it you need to have Golang installed 
+To start using it you need to have Golang installed.
 
-There are a few steps you need to take to start the task
+There are a few steps you need to take to start the task:
 
 ```
 make 
@@ -36,3 +36,6 @@ task-cli list todo
 task-cli list is-progress
 task-cli list done
 ```
+
+Link to task on roadmap.sh:
+https://roadmap.sh/projects/task-tracker
